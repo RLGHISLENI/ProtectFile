@@ -1,4 +1,6 @@
-﻿Public Class frmInfManual
+﻿Imports ProtectFile.Shared
+
+Public Class frmInfManual
 
 #Region "  Propriedades "
   Public ReadOnly Property IndexTipoCodificacao As Integer

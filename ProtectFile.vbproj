@@ -75,8 +75,8 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class\clsSeguranca.vb" />
-    <Compile Include="Class\clsUtil.vb" />
+    <Compile Include="Infra\Seguranca.vb" />
+    <Compile Include="Tools\Util.vb" />
     <Compile Include="Forms\frmInfManual.Designer.vb">
       <DependentUpon>frmInfManual.vb</DependentUpon>
     </Compile>

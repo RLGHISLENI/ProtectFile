@@ -1,8 +1,7 @@
 ﻿#Region "  Referências "
-Imports System
 Imports System.IO
-Imports System.Text
-Imports System.Security.Cryptography
+Imports ProtectFile.Infra
+Imports ProtectFile.Tools
 #End Region
 
 Public Class frmProtetor
@@ -12,10 +11,6 @@ Public Class frmProtetor
     AES = 0
     TripleDES = 1
   End Enum
-#End Region
-
-#Region "  Var. Privadas "
-  Private clsUtil As New clsUtil
 #End Region
 
 #Region "  Enums Privados "
@@ -82,10 +77,6 @@ Public Class frmProtetor
       Me.Cursor = Cursors.Default
     End Try
   End Sub
-  Private Sub frmProtetor_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
-    ' Desaloca memória
-    clsUtil.Dispose()
-  End Sub
 #End Region
 
 #Region "  Guia Proteger "
@@ -129,7 +120,7 @@ Public Class frmProtetor
       End If
 
       ' Gera uma chave randomica de 32 posições
-      txtChaveGerada.Text = clsUtil.ObterChaveRandomica(32)
+      txtChaveGerada.Text = Util.ObterChaveRandomica(32)
 
       btnProteger.Enabled = True
       btnProteger.Focus()
@@ -165,7 +156,7 @@ Public Class frmProtetor
 
       Try
         ' Gera o arquivo chave no formato hezadecimal contendo as informações necessárias para desproteção
-        swrArqKey.Write(clsUtil.ConverterTextoParaHexadecimal(strNomeArqProregido(strNomeArqProregido.Length - 1).ToString & ";" &
+        swrArqKey.Write(Util.ConverterTextoParaHexadecimal(strNomeArqProregido(strNomeArqProregido.Length - 1).ToString & ";" &
                         cboTpoCodificacao.SelectedIndex.ToString & ";" &
                         cboTamanho.SelectedIndex.ToString & ";" &
                         txtChaveGerada.Text))
@@ -173,7 +164,7 @@ Public Class frmProtetor
 
         Select Case CType(cboTpoCodificacao.SelectedIndex, enumTipoCodificacao)
           Case enumTipoCodificacao.AES
-            Dim clsAES As New clsSeguranca(txtChaveGerada.Text, CInt(cboTamanho.Text.Substring(0, 3)))
+            Dim clsAES As New Seguranca(txtChaveGerada.Text, CInt(cboTamanho.Text.Substring(0, 3)))
             Try
               clsAES.ProtegerAES(txtArquivo.Text, "#ProtectFile_" & strNomeArqProregido(strNomeArqProregido.Length - 1).ToString)
               blnSucesso = True
@@ -185,7 +176,7 @@ Public Class frmProtetor
             End Try
 
           Case enumTipoCodificacao.TripleDES
-            Dim clsTripleDES As New clsSeguranca(txtChaveGerada.Text, CInt(cboTamanho.Text.Substring(0, 3)))
+            Dim clsTripleDES As New Seguranca(txtChaveGerada.Text, CInt(cboTamanho.Text.Substring(0, 3)))
             Try
               clsTripleDES.ProtegerTripleDES(txtArquivo.Text, "#ProtectFile_" & strNomeArqProregido(strNomeArqProregido.Length - 1).ToString)
               blnSucesso = True
@@ -305,7 +296,7 @@ Public Class frmProtetor
         Dim strLinHexadecimal As String = smrArqKey.ReadLine()
 
         ' Converte a informação lida do arquivo em hexadecimal para texto
-        Dim strTextoConvertido As String = clsUtil.ConverterHexadecimalParaTexto(strLinHexadecimal)
+        Dim strTextoConvertido As String = Util.ConverterHexadecimalParaTexto(strLinHexadecimal)
 
         ' Desmembra a informação que foi armazenada com o separador (;)
         strKey = Split(strTextoConvertido, ";", , CompareMethod.Text)
@@ -359,7 +350,7 @@ Public Class frmProtetor
       lblStatusDesproteger.Text = "Desprotegendo..."
       Select Case CType(CInt(txtTpoCodificacao.Tag), enumTipoCodificacao)
         Case enumTipoCodificacao.AES
-          Dim clsAES As New clsSeguranca(txtChaveConvertida.Text, CInt(txtTamanho.Text.Substring(0, 3)))
+          Dim clsAES As New Seguranca(txtChaveConvertida.Text, CInt(txtTamanho.Text.Substring(0, 3)))
           Try
             clsAES.DesprotegerAES(txtArqProtegido.Text, txtNomeOriginalArq.Text)
             blnSucesso = True
@@ -371,7 +362,7 @@ Public Class frmProtetor
           End Try
 
         Case enumTipoCodificacao.TripleDES
-          Dim clsTripleDES As New clsSeguranca(txtChaveConvertida.Text, CInt(txtTamanho.Text.Substring(0, 3)))
+          Dim clsTripleDES As New Seguranca(txtChaveConvertida.Text, CInt(txtTamanho.Text.Substring(0, 3)))
           Try
             clsTripleDES.DesprotegerTripleDES(txtArqProtegido.Text, txtNomeOriginalArq.Text)
             blnSucesso = True
